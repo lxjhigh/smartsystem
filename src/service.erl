@@ -208,13 +208,18 @@ start_app(Mac,16#F4,Token,Body)->
 start_app(Mac,App,Token,Body)->
    Pid = self(),
    RegName = util:register_name(single),
-   {ok,NewPid} = singleframe_app_sup:start_child({RegName,Pid,Mac,App,Body}),
-   receive
-         {Ark,NewPid,App,ReplyInfo}->
-                      {Ark,ReplyInfo} 
-   after 10000 ->
-         {timeout,"timeout"}
-   end.
+   case singleframe_app_sup:start_child({RegName,Pid,Mac,App,Body}) of
+   
+   								{ok,NewPid}  ->
+															   receive
+															         {Ark,NewPid,App,ReplyInfo}->
+															                      {Ark,ReplyInfo} 
+															   after 10000 ->
+															         {timeout,"timeout"}
+															   end;
+									{error,_}      ->		
+	                 								{1,<<0:8>>}
+	 end. 					   
 
 
 %%处理规约指令0xF4,应答为Body内容
