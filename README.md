@@ -1,2 +1,1 @@
-# smartsystem
-udp server
+hello world
